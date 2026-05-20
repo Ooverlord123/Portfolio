@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ooverlord123 | Roblox Scripter</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #00ff88;
+      --green-dim: #00cc66;
+      --green-glow: rgba(0,255,136,0.15);
+      --cyan: #00e5ff;
+      --red: #ff3c6b;
+      --bg: #050a0e;
+      --bg2: #0a1218;
+      --bg3: #0f1c26;
+      --border: rgba(0,255,136,0.2);
+      --text: #c8e6d0;
+      --muted: #4a7a60;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-display: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCANLINE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.04) 2px,
+        rgba(0,0,0,0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── GRID BG ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── TERMINAL CURSOR ─── */
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .cursor::after {
+      content: '█';
+      color: var(--green);
+      animation: blink 1s step-end infinite;
+      margin-left: 2px;
+    }
+
+    /* ─── TYPEWRITER ─── */
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(5,10,14,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: var(--green);
+      letter-spacing: 2px;
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--muted); }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav ul a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    nav ul a:hover { color: var(--green); }
+
+    /* ─── SECTIONS ─── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6rem 4rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--green);
+      letter-spacing: 3px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-tag::before { content: '> '; color: var(--muted); }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 5rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.05;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .hero-name .accent { color: var(--green); }
+
+    .hero-alias {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .hero-alias .alias-name { color: var(--cyan); }
+
+    .hero-tagline {
+      font-size: 1.2rem;
+      color: var(--text);
+      max-width: 540px;
+      margin-bottom: 2.5rem;
+      font-weight: 500;
+      line-height: 1.7;
+    }
+
+    .hero-tagline strong { color: var(--green); font-weight: 600; }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat {
+      font-family: var(--font-mono);
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      color: var(--green);
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 2px;
+      padding: 0.7rem 1.6rem;
+      border: 1px solid var(--green);
+      color: var(--green);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn:hover { background: var(--green); color: var(--bg); }
+
+    .btn-ghost {
+      border-color: var(--muted);
+      color: var(--muted);
+    }
+
+    .btn-ghost:hover { background: var(--muted); color: var(--bg); }
+
+    /* ─── SECTION HEADER ─── */
+    .section-header {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header::before { content: '// '; color: var(--green); }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3rem;
+      letter-spacing: 1px;
+    }
+
+    /* ─── SYSTEMS / SERVICES ─── */
+    #systems {
+      padding: 6rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .systems-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .sys-card {
+      background: var(--bg2);
+      padding: 1.5rem;
+      transition: background 0.2s;
+    }
+
+    .sys-card:hover { background: var(--bg3); }
+
+    .sys-card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .sys-icon {
+      width: 32px; height: 32px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      color: var(--green);
+      flex-shrink: 0;
+    }
+
+    .sys-title {
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--green);
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
+    .sys-list {
+      list-style: none;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sys-list li::before {
+      content: '›  ';
+      color: var(--green-dim);
+    }
+
+    /* ─── WORK / PORTFOLIO ─── */
+    #work {
+      padding: 6rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .work-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .work-card:hover { border-color: var(--green); }
+
+    .work-img-wrap {
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      position: relative;
+      background: var(--bg3);
+      overflow: hidden;
+    }
+
+    .work-img-wrap img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* Placeholder shown when no image set */
+    .work-img-wrap .placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      gap: 0.5rem;
+    }
+
+    .placeholder-icon { font-size: 28px; color: var(--border); }
+
+    .work-info { padding: 1rem 1.25rem 1.25rem; }
+
+    .work-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      color: #fff;
+      letter-spacing: 1px;
+      margin-bottom: 0.4rem;
+    }
+
+    .work-desc {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .work-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--green-dim);
+      border: 1px solid rgba(0,204,102,0.25);
+      padding: 2px 8px;
+      letter-spacing: 1px;
+    }
+
+    /* How to add your own Gyazo embed:
+       Replace the data-gyazo attribute value on any .work-card with your Gyazo image URL.
+       e.g. data-gyazo="https://i.gyazo.com/YOURCODE.png"
+       Then update the .work-title and .work-desc text below.
+    */
+
+    /* ─── PAYMENT ─── */
+    #payment {
+      padding: 6rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .payment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .pay-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .pay-card:hover { border-color: var(--green); background: var(--bg3); }
+
+    .pay-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .pay-name {
+      font-family: var(--font-display);
+      font-size: 12px;
+      color: var(--green);
+      letter-spacing: 2px;
+      margin-bottom: 0.5rem;
+    }
+
+    .pay-amount {
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+
+    .pay-note {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      padding: 6rem 4rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .terminal-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+    }
+
+    .terminal-bar {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot-red { background: #ff3c6b; }
+    .dot-yellow { background: #ffd600; }
+    .dot-green { background: var(--green); }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    .terminal-body { padding: 1.5rem; }
+
+    .terminal-line {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .terminal-line .prompt { color: var(--green); }
+    .terminal-line .cmd { color: var(--cyan); }
+    .terminal-line .val { color: #fff; }
+    .terminal-line .comment { color: var(--muted); }
+
+    .terminal-links {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    footer p {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    footer .green { color: var(--green); }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── ANIMATED GLITCH ─── */
+    @keyframes glitch {
+      0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(-2px, 0); }
+      20% { clip-path: inset(30% 0 50% 0); transform: translate(2px, 0); }
+      40% { clip-path: inset(70% 0 10% 0); transform: translate(-1px, 0); }
+      60% { clip-path: inset(10% 0 80% 0); transform: translate(1px, 0); }
+      80% { clip-path: inset(60% 0 20% 0); transform: translate(-2px, 0); }
+    }
+
+    .glitch-wrap { position: relative; display: inline-block; }
+
+    .glitch-wrap::before,
+    .glitch-wrap::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+    }
+
+    .glitch-wrap::before {
+      color: var(--cyan);
+      animation: glitch 4s infinite;
+    }
+
+    .glitch-wrap::after {
+      color: var(--red);
+      animation: glitch 4s infinite 0.15s;
+    }
+
+    /* ─── DIVIDER ─── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 0 4rem;
+    }
+
+    @media (max-width: 640px) {
+      #hero, #systems, #work, #payment, #contact { padding: 4rem 1.5rem; }
+      .hero-stats { gap: 1.5rem; }
+      footer { padding: 2rem 1.5rem; }
+      nav { padding: 0 1.5rem; }
+      nav ul { gap: 1rem; }
+    }
+
+    /* ─── LOADING SCREEN ─── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #020608;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      overflow: hidden;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    #loader.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    /* loader scanlines */
+    #loader::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* loader grid */
+    #loader::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .loader-inner {
+      position: relative;
+      z-index: 3;
+      width: min(680px, 90vw);
+    }
+
+    /* top ascii logo */
+    .loader-ascii {
+      font-size: clamp(7px, 1.5vw, 13px);
+      color: var(--green);
+      line-height: 1.25;
+      margin-bottom: 2rem;
+      opacity: 0.85;
+      white-space: pre;
+      text-align: center;
+    }
+
+    /* terminal window */
+    .loader-terminal {
+      background: rgba(10,18,24,0.95);
+      border: 1px solid rgba(0,255,136,0.3);
+    }
+
+    .loader-topbar {
+      background: rgba(15,28,38,0.9);
+      border-bottom: 1px solid rgba(0,255,136,0.2);
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .loader-topbar .dot { width: 9px; height: 9px; border-radius: 50%; }
+
+    .loader-topbar-title {
+      font-size: 11px;
+      color: var(--muted);
+      margin-left: auto;
+      letter-spacing: 1px;
+    }
+
+    .loader-body {
+      padding: 1.4rem 1.6rem;
+      min-height: 240px;
+    }
+
+    #boot-lines {
+      font-size: clamp(11px, 2vw, 13px);
+      color: var(--text);
+      line-height: 2;
+      min-height: 180px;
+    }
+
+    .boot-line {
+      display: flex;
+      gap: 0.6rem;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .boot-line.show {
+      opacity: 1;
+      transform: none;
+    }
+
+    .boot-line .bl-prefix { color: var(--green); min-width: 28px; }
+    .boot-line .bl-text   { color: var(--text); flex: 1; }
+    .boot-line .bl-ok     { color: var(--green); margin-left: auto; font-size: 11px; letter-spacing: 1px; }
+    .boot-line .bl-warn   { color: #ffd600; margin-left: auto; font-size: 11px; }
+    .boot-line .bl-info   { color: var(--cyan); margin-left: auto; font-size: 11px; }
+
+    /* progress bar */
+    .loader-progress-wrap {
+      margin-top: 1.2rem;
+      border: 1px solid rgba(0,255,136,0.2);
+      height: 4px;
+      background: rgba(0,255,136,0.05);
+    }
+
+    #loader-bar {
+      height: 100%;
+      background: var(--green);
+      width: 0%;
+      transition: width 0.25s ease;
+      box-shadow: 0 0 8px var(--green);
+    }
+
+    .loader-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 0.6rem;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    #loader-pct { color: var(--green); }
+
+    /* blinking cursor inside boot log */
+    .boot-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 13px;
+      background: var(--green);
+      vertical-align: middle;
+      animation: blink 0.9s step-end infinite;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─── -->
+<nav>
+  <a href="#hero" class="nav-logo"><span>./</span>ooverlord123</a>
+  <ul>
+    <li><a href="#systems">systems</a></li>
+    <li><a href="#work">work</a></li>
+    <li><a href="#payment">payment</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section id="hero">
+  <div class="hero-tag">ROBLOX SCRIPTER FOR HIRE</div>
+  <h1 class="hero-name">
+    <span class="glitch-wrap" data-text="OOVERLORD">OOVERLORD</span><span class="accent">123</span>
+  </h1>
+  <p class="hero-alias">aka <span class="alias-name">Hellobrobudd</span></p>
+  <p class="hero-tagline">
+    <strong>Speed. Quality. Trust.</strong> Advanced Roblox scripting across combat, tycoons, datastores, vehicles, and beyond — delivered clean, fast, and at scale.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">7+</div>
+      <div class="stat-label">years experience</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">50+</div>
+      <div class="stat-label">system types</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">custom builds</div>
+    </div>
+  </div>
+  <div class="cta-row">
+    <a href="#contact" class="btn">[ HIRE ME ]</a>
+    <a href="#work" class="btn btn-ghost">[ VIEW WORK ]</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── SYSTEMS ─── -->
+<section id="systems">
+  <p class="section-header">capabilities</p>
+  <h2 class="section-title">SYSTEMS I BUILD</h2>
+
+  <div class="systems-grid reveal">
+
+    <div class="sys-card">
+      <div class="sys-card-header">
+        <div class="sys-icon">💾</div>
+        <div class="sys-title">GENERAL SYSTEMS</div>
+      </div>
+      <ul class="sys-list">
+        <li>DataStores (ProfileService, Datastore2)</li>
+        <li>Firebase / MongoDB integration</li>
+        <li>Admin Systems & Anti-Cheats</li>
+        <li>Discord to Roblox Webhook</li>
+        <li>Leaderstats & Leaderboards</li>
+        <li>Weather & Time Systems</li>
+        <li>Loading Screens & Main Menus</li>
+        <li>Gamepasses & Developer Products</li>
+        <li>Ranking Systems (Custom / Group)</li>
+        <li>Daily Chests, Crate / Egg Opening</li>
+        <li>RNG Systems, Puzzle & Checkpoint</li>
+      </ul>
+    </div>
+
+    <div class="sys-card">
+      <div class="sys-card-header">
+        <div class="sys-icon">⚔️</div>
+        <div class="sys-title">COMBAT SYSTEMS</div>
+      </div>
+      <ul class="sys-list">
+        <li>Guns (ranged mechanics)</li>
+        <li>M1, M2, Air & Wall Combos</li>
+        <li>Stun, Guard & Parry Mechanics</li>
+        <li>Grab & Throwback Mechanics</li>
+        <li>VFX Based Skill Combat</li>
+        <li>Animated Combat Skills</li>
+        <li>NPC & Boss Fight Systems</li>
+        <li>MOB Rewards & Quest Systems</li>
+        <li>Upgrade & Talent Point Systems</li>
+        <li>Skill Tree Systems</li>
+        <li>Crafting & Exploring Systems</li>
+      </ul>
+    </div>
+
+    <div class="sys-card">
+      <div class="sys-card-header">
+        <div class="sys-icon">🚗</div>
+        <div class="sys-title">VEHICLE SYSTEMS</div>
+      </div>
+      <ul class="sys-list">
+        <li>Drifting Systems</li>
+        <li>Tire Blast & Glass Cracking</li>
+        <li>Garage System with Save</li>
+        <li>Weaponized Cars (Tanks, Turrets)</li>
+        <li>Car Customization (Colour, Plate, Spoilers)</li>
+      </ul>
+      <div class="sys-card-header" style="margin-top: 1.2rem;">
+        <div class="sys-icon">🏗️</div>
+        <div class="sys-title">TYCOON SYSTEMS</div>
+      </div>
+      <ul class="sys-list">
+        <li>Tycoon Claiming & Save System</li>
+        <li>Morphing & Rebirths</li>
+        <li>Restart Tycoon Mechanics</li>
+        <li>Inventory & Custom Backpack</li>
+        <li>Character Customization</li>
+        <li>Shop & Simulator Systems</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── WORK ─── -->
+<section id="work">
+  <p class="section-header">portfolio</p>
+  <h2 class="section-title">RECENT WORK</h2>
+
+  <!--
+    HOW TO ADD YOUR GYAZO IMAGES:
+    1. Upload your clip to https://gyazo.com
+    2. Get the direct image URL  (right-click image → copy image address)
+       It looks like: https://i.gyazo.com/XXXXXXXXXXXXXXXXXXXXXXXXXX.png
+    3. Replace the src="YOUR_GYAZO_LINK_HERE" in any <img> tag below
+    4. Update the .work-title and .work-desc text to describe your project
+    5. To add MORE cards, copy one .work-card block and paste it in the grid
+  -->
+
+  <div class="work-grid">
+
+    <!-- CARD 1 — Replace with your own Gyazo link and description -->
+    <div class="work-card reveal">
+      <div class="work-img-wrap">
+        <!-- REPLACE src BELOW WITH YOUR GYAZO IMAGE URL -->
+        <img src="https://i.gyazo.com/e1071674903301ccd422906f6071d110.gif" alt="Project screenshot"
+             onerror="this.style.display='none'; this.parentNode.querySelector('.placeholder').style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <div class="placeholder-icon">[ ]</div>
+          ADD GYAZO LINK HERE
+        </div>
+      </div>
+      <div class="work-info">
+        <div class="work-title">Custom Rig Vehicle Inventory and Case Opening System</div>
+        <div class="work-desc">Custom inventory system for Go-Kart Vehicles along with Case Opening - Fully Datastored</div>
+        <div class="work-tags">
+          <span class="tag">VEHICLE</span>
+          <span class="tag">SHOP</span>
+          <span class="tag">Inventory</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="work-card reveal">
+      <div class="work-img-wrap">
+        <img src="https://i.gyazo.com/97b88c857016cae8e4f1bc2f9f10f21c.gif" alt="Project screenshot"
+             onerror="this.style.display='none'; this.parentNode.querySelector('.placeholder').style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <div class="placeholder-icon">[ ]</div>
+          ADD GYAZO LINK HERE
+        </div>
+      </div>
+      <div class="work-info">
+        <div class="work-title">Stamina based Combat System with Interactive Minimap</div>
+        <div class="work-desc">Combat system - M1 based on stamina alongside an interactive terrain based Minimap and Skill hotbar</div>
+        <div class="work-tags">
+          <span class="tag">Skills</span>
+          <span class="tag">Minimap</span>
+          <span class="tag">COMBAT</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="work-card reveal">
+      <div class="work-img-wrap">
+        <img src="https://i.gyazo.com/0d239d357f7f3497b141b42f7c88544a.gif" alt="Project screenshot"
+             onerror="this.style.display='none'; this.parentNode.querySelector('.placeholder').style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <div class="placeholder-icon">[ ]</div>
+          ADD GYAZO LINK HERE
+        </div>
+      </div>
+      <div class="work-info">
+        <div class="work-title">Simulator shop and Starter Pack Frontend UI System</div>
+        <div class="work-desc"> Full Simulator monetization shop with Gamepasses, starterpack and developer products</div>
+        <div class="work-tags">
+          <span class="tag">shop</span>
+          <span class="tag">Gamepasses</span>
+          <span class="tag">Simulator</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4 — Bonus slot -->
+    <div class="work-card reveal">
+      <div class="work-img-wrap">
+        <img src="https://i.gyazo.com/5ce5ca2e7949702af6ac7e93f69792aa.gif" alt="Project screenshot"
+             onerror="this.style.display='none'; this.parentNode.querySelector('.placeholder').style.display='flex';" />
+        <div class="placeholder" style="display:none;">
+          <div class="placeholder-icon">[ ]</div>
+          ADD GYAZO LINK HERE
+        </div>
+      </div>
+      <div class="work-info">
+        <div class="work-title">Pet merge and Placement system</div>
+        <div class="work-desc">Core System for Pet Merging, Spawning with upgrades and tiers</div>
+        <div class="work-tags">
+          <span class="tag">Pet</span>
+          <span class="tag">Upgrade</span>
+          <span class="tag">Placement</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── PAYMENT ─── -->
+<section id="payment">
+  <p class="section-header">rates</p>
+  <h2 class="section-title">PAYMENT METHODS</h2>
+
+  <div class="payment-grid reveal">
+
+    <div class="pay-card">
+      <div class="pay-icon">🪙</div>
+      <div class="pay-name">ROBUX</div>
+      <div class="pay-amount">1K – 100K</div>
+      <div class="pay-note">Tax excluded.<br/>Price varies by scope.</div>
+    </div>
+
+    <div class="pay-card">
+      <div class="pay-icon">💎</div>
+      <div class="pay-name">NITRO</div>
+      <div class="pay-amount">Basic / Full</div>
+      <div class="pay-note">Discord Nitro<br/>accepted as trade.</div>
+    </div>
+
+    <div class="pay-card">
+      <div class="pay-icon">₿</div>
+      <div class="pay-name">CRYPTO</div>
+      <div class="pay-amount">$5 USD+</div>
+      <div class="pay-note">BTC, ETH, LTC<br/>and others accepted.</div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ─── CONTACT ─── -->
+<section id="contact">
+  <p class="section-header">reach out</p>
+  <h2 class="section-title">CONTACT</h2>
+
+  <div class="terminal-box reveal">
+    <div class="terminal-bar">
+      <div class="dot dot-red"></div>
+      <div class="dot dot-yellow"></div>
+      <div class="dot dot-green"></div>
+      <span class="terminal-title">contact.sh</span>
+    </div>
+    <div class="terminal-body">
+      <div class="terminal-line">
+        <span class="prompt">$</span>
+        <span class="cmd">whoami</span>
+      </div>
+      <div class="terminal-line" style="padding-left: 1rem;">
+        <span class="val">ooverlord123 <span style="color:var(--muted)">// aka Hellobrobudd</span></span>
+      </div>
+      <div class="terminal-line" style="margin-top: 0.5rem;">
+        <span class="prompt">$</span>
+        <span class="cmd">cat</span>
+        <span class="val">availability.txt</span>
+      </div>
+      <div class="terminal-line" style="padding-left: 1rem;">
+        <span style="color: var(--green)">● OPEN FOR COMMISSIONS</span>
+      </div>
+      <div class="terminal-line" style="margin-top: 0.5rem;">
+        <span class="prompt">$</span>
+        <span class="cmd">reach_out</span>
+        <span class="comment">--where</span>
+      </div>
+      <div class="terminal-line" style="padding-left: 1rem; flex-direction: column; gap: 6px;">
+        <!--
+          REPLACE THE href VALUES BELOW WITH YOUR REAL LINKS / USERNAMES:
+          - Discord: your discord username or server invite
+          - Twitter: your Twitter/X handle
+          - Roblox: your Roblox profile URL
+          Add or remove links as needed.
+        -->
+        <span><span class="comment">#</span> <span style="color:var(--cyan)">Discord:</span> <a href="https://discord.gg/F7b2D2pr5y" style="color:#fff; text-decoration:none;" target="_blank">hellobrobudd</a></span>
+        <span><span class="comment">#</span> <span style="color:var(--cyan)">Roblox:</span> <a href="https://www.roblox.com/users/630365235/profile" style="color:#fff; text-decoration:none;" target="_blank">Ooverlord123</a></span>
+      </div>
+      <div class="terminal-line" style="margin-top: 1rem;">
+        <span class="prompt">$</span>
+        <span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <p>© 2025 <span class="green">Ooverlord123</span>. All rights reserved.</p>
+  <p>Built for GitHub Pages · <span class="green">Roblox Scripting Services</span></p>
+</footer>
+
+<script>
+  // ─── SCROLL REVEAL ───
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Stagger children
+        const children = e.target.querySelectorAll('.sys-card, .work-card, .pay-card');
+        children.forEach((c, i) => {
+          c.style.transitionDelay = (i * 0.08) + 's';
+          c.style.opacity = '0';
+          c.style.transform = 'translateY(16px)';
+          c.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          setTimeout(() => {
+            c.style.opacity = '1';
+            c.style.transform = 'translateY(0)';
+          }, 60 + i * 80);
+        });
+      }
+    });
+  }, { threshold: 0.1 });
+
+  reveals.forEach(r => observer.observe(r));
+
+  // ─── HERO TYPEWRITER ───
+  const taglines = [
+    'Advanced Roblox Scripter',
+    'Combat Systems Expert',
+    'DataStore Specialist',
+    'Vehicle & Tycoon Dev',
+  ];
+  let ti = 0, ci = 0, del = false;
+  const heroTag = document.querySelector('.hero-tag');
+  const base = 'ROBLOX SCRIPTER FOR HIRE';
+
+  function typeLoop() {
+    // subtle typing effect on the alias only
+  }
+
+  // ─── CORNER DECORATIONS ───
+  // Adds animated corner brackets to sys cards on hover
+  document.querySelectorAll('.sys-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      card.style.boxShadow = 'inset 0 0 20px rgba(0,255,136,0.04)';
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.boxShadow = '';
+    });
+  });
+</script>
+</body>
+</html>
